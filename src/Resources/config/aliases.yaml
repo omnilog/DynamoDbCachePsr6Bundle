@@ -1,0 +1,4 @@
+services:
+  Omnilog\DynamoDbCacheBundle\Cache\DynamoDbCacheAdapter: '@omnilog.dynamo_cache.adapter'
+  Omnilog\DynamoDbCache\DynamoDbCache: '@omnilog.dynamo_cache.cache'
+  Omnilog\DynamoDbCache\Encoder\CacheItemEncoderInterface: '@omnilog.dynamo_cache.encoder.default'

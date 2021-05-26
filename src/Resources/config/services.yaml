@@ -1,0 +1,34 @@
+services:
+  omnilog.dynamo_cache.encoder.serialize:
+    class: Omnilog\DynamoDbCache\Encoder\SerializeItemEncoder
+
+  omnilog.dynamo_cache.encoder.json:
+    class: Omnilog\DynamoDbCache\Encoder\JsonItemEncoder
+    arguments:
+      - '%omnilog.dynamo_cache.json_encoder.encode_flags%'
+      - '%omnilog.dynamo_cache.json_encoder.decode_flags%'
+      - '%omnilog.dynamo_cache.json_encoder.depth%'
+
+  omnilog.dynamo_cache.encoder.default: '@omnilog.dynamo_cache.encoder.serialize' # redefined in extension
+
+  omnilog.dynamo_cache.cache: # arguments defined in extension
+    class: Omnilog\DynamoDbCache\DynamoDbCache
+    arguments:
+      $converter: '@omnilog.dynamo_cache.converter_registry'
+      $encoder: '@omnilog.dynamo_cache.encoder.default'
+
+  omnilog.dynamo_cache.adapter:
+    class: Omnilog\DynamoDbCacheBundle\Cache\DynamoDbCacheAdapter
+    arguments:
+      - '@omnilog.dynamo_cache.cache'
+      - '@omnilog.dynamo_cache.converter.cache_item'
+
+  omnilog.dynamo_cache.converter.cache_item:
+    class: Omnilog\DynamoDbCacheBundle\Converter\CacheItemConverter
+    arguments:
+      - '@omnilog.dynamo_cache.encoder.default'
+    tags:
+      - omnilog.dynamo_cache.converter
+
+  omnilog.dynamo_cache.converter_registry:
+    class: Omnilog\DynamoDbCache\Converter\CacheItemConverterRegistry
